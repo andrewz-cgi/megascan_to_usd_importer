@@ -1,4 +1,4 @@
-"""\
+"""
 Simple module for commonly used function across differenc modules.
 """
 

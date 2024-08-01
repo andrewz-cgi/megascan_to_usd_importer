@@ -128,6 +128,9 @@ class MainUI(QMainWindow):
 
     @property
     def settings(self) -> UsdImporterSettings:
+        """
+        Returns a UsdImporterSettings class instance, containing the current settings of the script
+        """
         return UsdImporterSettings(
             self.asset_name_line.text(),
             'textures_path',
@@ -137,6 +140,9 @@ class MainUI(QMainWindow):
 
     @property
     def preset(self) -> UsdImpotertPreset:
+        """
+        Get a UsdImpotertPreset instance containing the current preset settings.
+        """
         return UsdImpotertPreset(
             self.save_path,
             self.tab_widget.preset
@@ -144,6 +150,9 @@ class MainUI(QMainWindow):
 
     @property
     def save_path(self) -> str:
+        """
+        Return the expanded string for the current save path for the USD file.
+        """
         destination_folder = hou.text.expandString(self.destination_folder_line.text())
 
         if destination_folder:
@@ -154,12 +163,17 @@ class MainUI(QMainWindow):
 
     @property
     def preset_path(self) -> str:
+        """
+        The default path for the preset folder, based on the env variable HOME and Houdini version
+        """
         houdini_version = hou.applicationVersion()
         return hou.expandString(f'{hou.getenv("HOME")}/houdini{houdini_version[0]}.{houdini_version[1]}/scripts/usd_importer/presets')
 
     @property
     def selected_preset(self) -> str:
-
+        """
+        The complete path for the selected preset file.
+        """
         if self.preset_list_combo.currentIndex() == 0:
             return None
 
@@ -170,11 +184,10 @@ class MainUI(QMainWindow):
         return None
 
 
-    """
-    Load a new asset, create the preview network, and save to disk
-    """
     def on_megascan_load_asset(self):
-
+        """
+        On load asset function, it will check for a valid megascan json file in the selected path, parse it, and populate the UI.
+        """
         asset_info_path = hou.ui.selectFile(hou.getenv("HOME") if not self.last_selected_asset_folder else self.last_selected_asset_folder, title="Asset Folder", file_type=hou.fileType.Directory)
 
         if asset_info_path:
@@ -203,17 +216,28 @@ class MainUI(QMainWindow):
             self.tab_widget.update_info(self.asset_info)
 
     def on_change_save_directory(self):
+        """
+        On change save dir button action.
+        """
         save_path = hou.ui.selectFile(hou.getenv("HOME"), title="Asset Folder", file_type=hou.fileType.Directory)
         if save_path: self.destination_folder_line.setText(save_path)
 
     def on_preview(self):
+        """
+        On preview button action.
 
+        It will create the complete network in stage context with the desired settings.
+        """
         if self.asset_info: 
             self.active_preview, self.active_component_output = importer.usd_component_builder(self.asset_info, self.settings)
             self.save_btn.setEnabled(True)
 
     def on_save_on_disk(self):
+        """
+        On save on disk button action.
 
+        It will save the USD file on disk in a dedicated folder, with the desired settings.
+        """
         if self.active_preview and self.active_component_output:
             
             save_path = hou.text.expandString(hou.node(self.active_component_output).parm('lopoutput').eval())
@@ -246,7 +270,6 @@ class MainUI(QMainWindow):
         """
         Creates a new preset based of the settings
         """
-
         result = hou.ui.readInput('Enter new preset name:', buttons=('OK', 'Cancel'))
 
         if result[0] == 0: 
@@ -279,7 +302,9 @@ class MainUI(QMainWindow):
             self.populate_preset_box()
 
     def on_load_preset(self):
-
+        """
+        Load a preset file
+        """
         preset_path = self.selected_preset
         
         # Default preset
@@ -299,7 +324,9 @@ class MainUI(QMainWindow):
         pass
 
     def populate_preset_box(self, active=None):
-
+        """
+        Polulate che preset compobox with all the found presets, when the window is opened for the first time, or when we delete or create a preset
+        """
         json_files_list = sorted(glob.glob(os.path.join(self.preset_path, '*.json')))
 
         self.preset_list_combo.clear()
@@ -315,17 +342,23 @@ class MainUI(QMainWindow):
     Expand or collapse path strings
     """
     def on_asset_folder_line_mouse_press(self, event):
-
+        """
+        on_asset_folder_line_mouse_press event, it will expand or collapse the string path.
+        """
         if event.button() == Qt.MiddleButton:
             self.expand_or_collapse(self.asset_folder_line)
 
     def on_destination_folder_line_mouse_press(self, event):
-        
+        """
+        on_destination_folder_line_mouse_press event, it will expand or collapse the string path.
+        """
         if event.button() == Qt.MiddleButton:
             self.expand_or_collapse(self.destination_folder_line)
 
     def expand_or_collapse(self, item):
-
+        """
+        Expand or collaspe string whit env vars $HOME, $HIP, $JOB
+        """
         vars = ['$HOME', '$HIP', '$JOB']
         text = item.text()
         if text:
@@ -335,6 +368,8 @@ class MainUI(QMainWindow):
                 item.setText(hou.text.collapseCommonVars(text, vars = vars))
 
 def run_ui():
-
+    """
+    Run and show the main UI for the script
+    """
     win = MainUI(parent=hou.qt.mainWindow())
     win.show()
