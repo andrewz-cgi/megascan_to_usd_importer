@@ -16,7 +16,7 @@ from ..types.settings import UsdImporterSettings
 
 DEBUG = True
 
-class NewUI(QMainWindow):
+class MainUI(QMainWindow):
 
     """
     Main User Interfece for the import USD tool.
@@ -38,13 +38,16 @@ class NewUI(QMainWindow):
     active_component_output = None
     last_selected_asset_folder = None
 
+    TITLE = 'Megascan to USD'
+    VERSION = '1.0'
+
     def __init__(self, parent=None, debug=DEBUG):
         
         self.debug = debug
 
-        super(NewUI, self).__init__(parent)
+        super(MainUI, self).__init__(parent)
 
-        self.setWindowTitle("Usd importer 0.1")
+        self.setWindowTitle(f'{self.TITLE} {self.VERSION}')
         self.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         self.setFixedSize(600, 525)
 
@@ -333,5 +336,5 @@ class NewUI(QMainWindow):
 
 def run_ui():
 
-    win = NewUI(parent=hou.qt.mainWindow())
+    win = MainUI(parent=hou.qt.mainWindow())
     win.show()
