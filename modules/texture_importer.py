@@ -73,7 +73,10 @@ def create_materialx_network(material_subnet, base_color=None, roughness=None, n
         base_color_correction.setInput(base_color_correction.inputIndex("in"), base_color_map)
         color_out = base_color_correction
     else:
+        """
         base_color: hou.VopNode = create_vop_parameter(material_subnet, "Base_Color", "color", "base_color", "Base Color")
+        """
+        base_color = create_mtlx_constant(material_subnet, "Base_Color", "color3")
         color_out = base_color
     
     # ----- Color Variation -----
@@ -139,8 +142,12 @@ def create_materialx_network(material_subnet, base_color=None, roughness=None, n
         normal_map.parm("file").set(normal)
         normal_map.parm("signature").set("vector3")
         #
+        """
         normal_intensity = create_vop_parameter(material_subnet, "Normal_Intensity", "float", "normal_intensity", "Normal Intensity")
         normal_intensity.parm("floatdef").set(1)
+        """
+        normal_intensity = create_mtlx_constant(material_subnet, "Normal_Intensity", "float")
+        normal_intensity.parm("value").set(1)
         #
         mtlxnormalmap: hou.VopNode = material_subnet.createNode("mtlxnormalmap", "mtlxnormalmap")
         mtlxnormalmap.setInput(mtlxnormalmap.inputIndex("in"), normal_map)
@@ -157,22 +164,35 @@ def create_materialx_network(material_subnet, base_color=None, roughness=None, n
             translucency_map.parm("signature").set("float")
             base_translucency_out = translucency_map
         else:
+            """
             translucency_def = create_vop_parameter(material_subnet, "Translucency_def", "float", "translucency", "Translucency")
             translucency_def.parm("floatdef").set(1)
+            """
+            translucency_def = create_mtlx_constant(material_subnet, "Translucency_def", "float")
+            translucency_def.parm("value").set(1)
             base_translucency_out = translucency_def
         #
         translucency_remap: hou.VopNode = material_subnet.createNode("mtlxremap", "Translucency_remap")
         translucency_remap.parm("outhigh").set(.1)
         translucency_remap.setInput(translucency_remap.inputIndex("in"), base_translucency_out)
         #
+        """
         thin_walled = create_vop_parameter(material_subnet, "thin_walled", "int", "thin_walled", "Thin Walled")
         thin_walled.parm("intdef").set(1)
+        """
+        thin_walled = create_mtlx_constant(material_subnet, "thin_walled", "integer")
+        thin_walled.parm("value").set(1)
         #
+        """
         translucency_color = create_vop_parameter(material_subnet, "translucency_color", "color", "translucency_color", "Translucency Color")
         translucency_color.parm("colordefr").set(0.62)
         translucency_color.parm("colordefg").set(1)
         translucency_color.parm("colordefb").set(0)
-
+        """
+        translucency_color = create_mtlx_constant(material_subnet, "translucency_color", "color3")
+        translucency_color.parm("value_color3r").set(0.62)
+        translucency_color.parm("value_color3g").set(1)
+        translucency_color.parm("value_color3b").set(0)
         #
         mtlxstandard_surface.setInput(mtlxstandard_surface.inputIndex("subsurface"), translucency_remap)
         mtlxstandard_surface.setInput(mtlxstandard_surface.inputIndex("subsurface_color"), translucency_color)
@@ -205,9 +225,13 @@ def create_materialx_network(material_subnet, base_color=None, roughness=None, n
         remap_displacement.parm("outhigh").set(.5)
         remap_displacement.setInput(remap_displacement.inputIndex("in"), displacement_map)
         #
+        """
         displacement_scale = create_vop_parameter(material_subnet, "Displacement_Scale", "float", "scale", "Scale")
         displacement_scale.parm("floatdef").set(0.015)
         displacement_scale.parm("rangeflt2").set(10)
+        """
+        displacement_scale = create_mtlx_constant(material_subnet, "Displacement_Scale", "float")
+        displacement_scale.parm("value").set(0.015)
         #
         mtlx_displacement: hou.VopNode = material_subnet.createNode("mtlxdisplacement", "mtlxdisplacement")
         mtlx_displacement.setInput(mtlx_displacement.inputIndex("displacement"), remap_displacement)
@@ -234,6 +258,12 @@ def create_vop_parameter(context, name, type, parmname, parmlabel=None, export=0
     if parmlabel: vop_parameter.parm("parmlabel").set(parmlabel)
     vop_parameter.parm("exportparm").set(export)
     return vop_parameter
+
+def create_mtlx_constant(context, name, signature) -> hou.VopNode:
+    mtlxconstant: hou.VopNode =  context.createNode("mtlxconstant", name)
+    mtlxconstant.parm("signature").set(signature)
+    return mtlxconstant
+
 
 def filter_maps(texture_files_list, map_dictionary, map_name):
     
