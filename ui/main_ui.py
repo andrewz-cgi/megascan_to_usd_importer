@@ -14,7 +14,7 @@ from ..modules import usd_importer as importer
 from ..types.preset import UsdImpotertPreset, UsdImpotertPresetEncoder, UsdImpotertPresetDecoder
 from ..types.settings import UsdImporterSettings
 
-DEBUG = True
+DEBUG = False
 
 class MainUI(QMainWindow):
 
