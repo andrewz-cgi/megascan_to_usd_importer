@@ -13,4 +13,4 @@ if scritps_path not in sys.path:
 
 import usd_importer.ui as ui
 
-ui.run_new_ui()
+ui.run_ui()
