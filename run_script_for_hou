@@ -11,6 +11,6 @@ scritps_path = os.path.join(hou.getenv("HOME"), "houdini{}.{}".format(houdini_ve
 if scritps_path not in sys.path:
     sys.path.append(scritps_path)
 
-import usd_importer.ui as ui
+import megascan_to_usd_importer.ui as ui
 
 ui.run_ui()
