@@ -21,7 +21,7 @@
     ·-->
     <a href="https://github.com/andrewz-cgi/megascan_to_usd_importer/issues">Report Bug</a>
     ·
-    <a href="https://github.com/othneildrew/Best-README-Template/issues/new?labels=enhancement&template=feature-request---.md">Request Feature</a>
+    <a href="https://github.com/andrewz-cgi/megascan_to_usd_importer/issues">Request Feature</a>
   </p>
 </div>
 
