@@ -133,24 +133,24 @@ _Below is an example of how you can instruct your audience on installing and set
       ```
       If the folder _scripts_ does not exist, create it.
 3. Create a new Shelf tool with the following code. I suggest you do it inside the Solaris desktop.
-   ```sh
-   import sys, os
+```sh
+import sys, os
 
-    houdini_version = hou.applicationVersion()
+houdini_version = hou.applicationVersion()
 
-    if houdini_version < (19, 5, 0):
-        hou.ui.displayMessage("At least Houdini 19.5 version is required", severity=hou.    severityType.Error)
-        sys.exit()
+if houdini_version < (19, 5, 0):
+    hou.ui.displayMessage("At least Houdini 19.5 version is required", severity=hou.    severityType.Error)
+    sys.exit()
 
-    scritps_path = os.path.join(hou.getenv("HOME"), "houdini{}.{}".format(houdini_version[0], houdini_version[1]), "scripts")
+scritps_path = os.path.join(hou.getenv("HOME"), "houdini{}.{}".format(houdini_version[0], houdini_version[1]), "scripts")
 
-    if scritps_path not in sys.path:
-        sys.path.append(scritps_path)
+if scritps_path not in sys.path:
+    sys.path.append(scritps_path)
 
-    import usd_importer.ui as ui
+import megascan_to_usd_importer.ui as ui
 
-    ui.run_ui()
-   ```
+ui.run_ui()
+```
 Done :)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
